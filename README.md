@@ -36,7 +36,7 @@ java AuctionConsole
 
 ## Reflection
 
-### What changed from our specification?
+### What changed from our spec?
 
 - **Extra methods in the model.** The spec gave the controller no way to see the result of an item. We added `isRoundActive()`, `isReadyToClose()`, `getLastClosedItem()` and `getClosedItems()` to `AuctionSim`, and `addWonItem()` and `getWonItems()` to `Bidder`. The controller needs these to show winners and final results without touching the queues.
 - **Fairer turn order.** The spec said each bidder moves to the back of the queue after their turn. But then the queue ends up in the same order after every item, so the same bidder always goes first. We added one extra rotation when an item closes, so a different bidder goes first next time.
