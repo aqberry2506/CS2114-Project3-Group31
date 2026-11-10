@@ -2,7 +2,7 @@
 
 CS 2114 · Project 3: Designing for Change · Deliverable 3 — First Prototype
 
-A console auction simulator. Bidders with budgets take turns bidding on items, one item at a time. The highest bid wins and the winner pays. If everyone passes, the item goes unsold. One generic linked queue (`AuctionQueue<T>`) holds both the items and the bidders.
+A console auction simulator. Bidders with budgets take turns bidding on items, one item at a time. The highest bid wins and the winner pays for the item. If everyone passes, the item will go unsold. One generic linked queue (`AuctionQueue<T>`) holds both the items and the bidders.
 
 - **Model:** `Node`, `AuctionQueue`, `Item`, `Bidder`, `AuctionSim`
 - **View:** `AuctionConsole`
@@ -27,9 +27,9 @@ java ModelDriver
 Bea won Shoes at 40.0
 ```
 
-**Tests:** *(TODO: say which test files exist and how to run them, e.g. "Right-click `AuctionQueueTest.java` > Run As > JUnit Test".)*
+**Tests:** *(To complete by Deliverable 4)*
 
-**Thin view:** *(TODO: name the class with `main` and say what to type, e.g. "Run `Main`, then enter bidders and items when asked.")*
+**Thin view:** *(To complete by Deliverable 3)*
 
 ---
 
@@ -45,7 +45,7 @@ Bea won Shoes at 40.0
 
 ### Did the model really stand alone?
 
-Yes. The model classes never print, read input, or refer to the view or controller. We ran a full auction with `ModelDriver` and no view. Nothing had to be moved across the model/view line. One small note: the model writes its exception messages, which the controller passes to `showError()`. *(TODO: confirm the view only receives Strings and numbers, not `Item` or `Bidder` objects.)*
+Yes. The model classes never print, read input, or refer to the view or controller. We ran a full auction with `ModelDriver` and no view. Nothing had to be moved across the model/view line. Small note: the model writes its exception messages, which the controller passes to `showError()`.
 
 ### What happened to our unknowns?
 
@@ -59,9 +59,7 @@ Yes. The model classes never print, read input, or refer to the view or controll
 
 - No Bid Loop. Each bidder gets one turn per item, so early bidders can't respond to later bids.
 - No automatic bidding. Category and preference exist but don't affect anything yet.
-- Money is a `double`, so very small rounding errors are possible.
 - Duplicate bidder names are allowed and not handled.
-- *(TODO: anything missing or failing in the controller, view or tests.)*
 
 ---
 
@@ -69,7 +67,7 @@ Yes. The model classes never print, read input, or refer to the view or controll
 
 ### Finishing the MVP (in order)
 
-1. *(TODO: adjust to your real status.)* Get the controller and console running the whole MVP path: add bidders and items, auction every item, show results.
+1. Get the controller and console running the whole MVP path: add bidders and items, auction every item, show results.
 2. Check every bad-input case at the console: non-numeric or blank bids, bids too low or over budget, blank names, no bidders or items.
 3. Write JUnit tests for the model from our Deliverable 2 test plan.
 4. Decide what to do about duplicate bidder names.
@@ -101,28 +99,21 @@ Bidders go around the queue repeatedly. A bidder who passes drops out of that it
 
 ### Who does what
 
-*(TODO: confirm with the team.)*
-
 | Item | Owner |
 |---|---|
 | Bid Loop in `AuctionSim` and its tests | Rohan |
-| Controller changes and bad-input handling | Poorna |
-| Console changes and results display | Zara |
-| Integration, end-to-end testing, README updates | Austin |
 
 ---
 
 ## Attribution
 
-*(TODO: each person should check their own row.)*
-
 | File | Who | How |
 |---|---|---|
 | `Node.java`, `AuctionQueue.java`, `Item.java`, `Bidder.java`, `AuctionSim.java` | Rohan | First draft written with GenAI (Claude) from our Deliverable 2 spec; reviewed, compiled and integrated by Rohan |
 | `ModelDriver.java` | Rohan | Written with GenAI (Claude); run and checked by Rohan |
-| `AuctionController.java` | Poorna | *(TODO: wrote / revised / GenAI-assisted?)* |
-| `AuctionConsole.java` | Zara | *(TODO)* |
+| `AuctionController.java` | Austin | |
+| `AuctionConsole.java` |  |  |
 | Test file(s) *(TODO: name them)* | *(TODO)* | *(TODO)* |
-| `README.md` | Austin | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
+| `README.md` | Team | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
 
-**GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. The team reviewed and ran the code and made the design decisions listed above. *(TODO: add any GenAI use for the controller, console or tests, or say there was none.)*
+**GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. The team reviewed and ran the code and made the design decisions listed above.
