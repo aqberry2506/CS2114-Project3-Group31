@@ -27,9 +27,10 @@ java ModelDriver
 Bea won Shoes at 40.0
 ```
 
-**Tests:** *(To complete by Deliverable 4)*
+**Tests (JUnit 5):** Run via Eclipse (Right click on the test file -> Run as -> JUnit Test)
 
-**Thin view:** *(To complete by Deliverable 3)*
+**Thin view:** javac Node.java AuctionQueue.java Item.java Bidder.java AuctionSim.java AuctionController.java AuctionConsole.java
+java AuctionConsole
 
 ---
 
@@ -41,7 +42,7 @@ Bea won Shoes at 40.0
 - **Fairer turn order.** The spec said each bidder moves to the back of the queue after their turn. But then the queue ends up in the same order after every item, so the same bidder always goes first. We added one extra rotation when an item closes, so a different bidder goes first next time.
 - **Validation.** The model throws exceptions for bad data (blank names, negative money, bad bids). `placeBid` returns `false` instead of throwing, as the spec says, and the same bidder keeps their turn. Turning typed text into a number stays in the controller.
 - **Small decisions.** A bid must be strictly higher than the current bid (the start price if there are no bids yet). Names are trimmed. A blank preference is allowed, but a null one is not.
-- **Tests.** *(TODO: which spec test cases are written, which are not, and anything that changed.)*
+- **Tests.** All the core unit tests we planned in Deliverable 2 for `AuctionQueue`, `Item`, `Bidder`, and `AuctionSim` using JUnit 5 (`AuctionQueueTest`, `ItemTest`, `BidderTest`, `AuctionSimTest`). They test all our valid inputs, weird edge cases, bad inputs, and state exceptions.
 
 ### Did the model really stand alone?
 
@@ -69,7 +70,7 @@ Yes. The model classes never print, read input, or refer to the view or controll
 
 1. Get the controller and console running the whole MVP path: add bidders and items, auction every item, show results.
 2. Check every bad-input case at the console: non-numeric or blank bids, bids too low or over budget, blank names, no bidders or items.
-3. Write JUnit tests for the model from our Deliverable 2 test plan.
+3. Look through and check every edge case coverage in the existing JUnit Tests.
 4. Decide what to do about duplicate bidder names.
 
 ### Our change feature: Bid Loop
@@ -113,7 +114,7 @@ Bidders go around the queue repeatedly. A bidder who passes drops out of that it
 | `ModelDriver.java` | Rohan | Written with GenAI (Claude); run and checked by Rohan |
 | `AuctionController.java` | Poorna | |
 | `AuctionConsole.java` | Zara |  | 
-| `AuctionQueueTest.java`, `AuctionSimTest.java`, `BidderTest.java`, `ItemTest.java`  | Austin |  |
+| `AuctionQueueTest.java`, `AuctionSimTest.java`, `BidderTest.java`, `ItemTest.java`  | Austin | Written and executed using JUnit 5 based on the Deliverable 2 test plan |
 | `README.md` | Team | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
 
 **GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. The team reviewed and ran the code and made the design decisions listed above.
