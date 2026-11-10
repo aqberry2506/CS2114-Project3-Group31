@@ -112,7 +112,7 @@ Bidders go around the queue repeatedly. A bidder who passes drops out of that it
 | `Node.java`, `AuctionQueue.java`, `Item.java`, `Bidder.java`, `AuctionSim.java` | Rohan | First draft written with GenAI (Claude) from our Deliverable 2 spec; reviewed, compiled and integrated by Rohan |
 | `ModelDriver.java` | Rohan | Written with GenAI (Claude); run and checked by Rohan |
 | `AuctionController.java` | Poorna | |
-| `AuctionConsole.java` |  | Zara | 
+| `AuctionConsole.java` | Zara |  | 
 | Test file(s) *(TODO: name them)* | *(TODO)* | *(TODO)* |
 | `README.md` | Team | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
 
