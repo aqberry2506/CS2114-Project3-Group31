@@ -113,7 +113,7 @@ Bidders go around the queue repeatedly. A bidder who passes drops out of that it
 | `ModelDriver.java` | Rohan | Written with GenAI (Claude); run and checked by Rohan |
 | `AuctionController.java` | Poorna | |
 | `AuctionConsole.java` | Zara |  | 
-| Test file(s) *(TODO: name them)* | *(TODO)* | *(TODO)* |
+| `AuctionQueueTest.java`, `AuctionSimTest.java`, `BidderTest.java`, `ItemTest.java`  | Austin |  |
 | `README.md` | Team | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
 
 **GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. The team reviewed and ran the code and made the design decisions listed above.
