@@ -52,7 +52,7 @@ Our core method signatures and validation rules stayed right on track with our D
 
 ### What design change would make the next feature cheaper?
 
-If we were adding something like automatic proxy bidding next, setting up an Observer / Event Listener pattern between `AuctionSim` and the controller/view would make things way better. Right now, the view is polling the model during a refresh; an observer system would let the model broadcast state changes automatically.
+If we were adding something like automatic proxy bidding next, setting up an Observer / Event Listener pattern between `AuctionSim` and the controller/view would make things way better and cheaper. Right now, the view is polling the model during a refresh; an observer system would let the model broadcast state changes automatically.
 
 ### What doesn't work yet?
 
@@ -81,6 +81,13 @@ If we were adding something like automatic proxy bidding next, setting up an Obs
 2. **Core MVP Bidding:** Walk through standard bidding, demonstrate out of budget rejections, invalid low bids, and passing turns.
 3. **Change Feature (Bid Loop):** Demonstrate the multi-round Bid Loop in action as competing bidders circle the queue across multiple loops.
 4. **Results & Test Execution:** Close the auction, display final winning results, and showcase passing JUnit test execution in the terminal.
+
+### Team Member Ownership for Final Build
+
+- **Rohan:** AuctionSim.java loop edge cases and final simulation logging.
+- **Poorna:** Controller error handling and final input validation.
+- **Zara:** Console view display formatting and output verification.
+- **Austin:** JUnit test verification and edge case assertion coverage.
 
 ---
 
