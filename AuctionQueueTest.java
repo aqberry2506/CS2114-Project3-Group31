@@ -58,7 +58,21 @@ public class AuctionQueueTest
         assertEquals("C", queue.dequeue());
         assertTrue(queue.isEmpty());
     }
-
+    
+    @Test
+    public void testInterleavedOperations()
+    {
+        queue.enqueue("A");
+        queue.enqueue("B");
+        assertEquals("A", queue.dequeue());
+        
+        queue.enqueue("C");
+        assertEquals("B", queue.peek());
+        assertEquals("B", queue.dequeue());
+        
+        assertEquals("C", queue.dequeue());
+        assertTrue(queue.isEmpty());
+    }
 
     @Test
     public void testDequeueEmptyThrowsException()

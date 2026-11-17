@@ -11,7 +11,9 @@ import java.util.List;
  * item will not be sold. After a bidder's turn, they will move to the back of
  * the queue. When an item closes, the queue is rotated one extra place
  * so a different bidder goes first on the next item.
- *
+ * 
+ * Deliverable 4 update: Supports multi-round Bid Loops where active bidders
+ * go around the queue repeatedly until competition narrows or max loops are hit.
  */
 public class AuctionSim {
 
@@ -21,6 +23,8 @@ public class AuctionSim {
     private int turnsRemaining;
     private Item lastClosedItem;
     private final List<Item> closedItems;
+    private int currentLoop;
+    private static final int MAX_LOOPS = 3;
 
     /**
      * Creates an empty simulation.
@@ -32,6 +36,7 @@ public class AuctionSim {
         turnsRemaining = 0;
         lastClosedItem = null;
         closedItems = new ArrayList<>();
+        currentLoop = 0;
     }
 
     /**
@@ -80,6 +85,7 @@ public class AuctionSim {
         }
         currentActiveItem = itemQueue.dequeue();
         turnsRemaining = bidderQueue.size();
+        currentLoop = 1;
         return currentActiveItem;
     }
 
@@ -142,6 +148,7 @@ public class AuctionSim {
         lastClosedItem = currentActiveItem;
         currentActiveItem = null;
         turnsRemaining = 0;
+        currentLoop = 0;
 
         // Fairness: shift who goes first on the next item.
         if (bidderQueue.size() > 1) {
@@ -172,6 +179,20 @@ public class AuctionSim {
         }
         return bidderQueue.peek();
     }
+    
+    /**
+     * @return the current bid loop number (1 up to MAX_LOOPS)
+     */
+    public int getCurrentLoop() {
+        return currentLoop;
+    }
+
+    /**
+     * @return maximum allowed loops per item
+     */
+    public int getMaxLoops() {
+        return MAX_LOOPS;
+    }
 
     // ----- Extras beyond the Deliverable 2 signatures (for the controller) -----
 
@@ -188,7 +209,7 @@ public class AuctionSim {
      *         for closeCurrentItem()
      */
     public boolean isReadyToClose() {
-        return currentActiveItem != null && turnsRemaining == 0;
+        return currentActiveItem != null && (turnsRemaining == 0 || currentLoop > MAX_LOOPS);
     }
 
     /**
@@ -210,7 +231,7 @@ public class AuctionSim {
     // ----- Helpers -----
 
     private void requireActiveTurn() {
-        if (currentActiveItem == null || turnsRemaining == 0) {
+        if (currentActiveItem == null || (turnsRemaining == 0 && currentLoop <= MAX_LOOPS)) {
             throw new IllegalStateException("There is no active turn");
         }
     }
@@ -218,5 +239,12 @@ public class AuctionSim {
     private void advanceTurn() {
         bidderQueue.enqueue(bidderQueue.dequeue());
         turnsRemaining--;
+        
+        if (turnsRemaining <= 0 && currentActiveItem != null) {
+            currentLoop++;
+            if (currentLoop <= MAX_LOOPS) {
+                turnsRemaining = bidderQueue.size();
+            }
+        }
     }
 }

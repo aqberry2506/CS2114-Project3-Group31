@@ -1,11 +1,11 @@
-
 import java.util.Scanner;
 
 /**
- * Console view for the Auction Simulator.
- * Handles user input and displays auction information.
+ * Console view for the Auction Simulator. Handles user input and displays
+ * auction information.
  */
-public class AuctionConsole implements AuctionController.AuctionView
+public class AuctionConsole
+    implements AuctionController.AuctionView
 {
     private final Scanner scanner;
     private final AuctionController controller;
@@ -20,6 +20,7 @@ public class AuctionConsole implements AuctionController.AuctionView
         this.inputError = false;
     }
 
+
     @Override
     public void showError(String message)
     {
@@ -27,11 +28,13 @@ public class AuctionConsole implements AuctionController.AuctionView
         inputError = true;
     }
 
+
     @Override
     public void showMessage(String message)
     {
         System.out.println(message);
     }
+
 
     @Override
     public void refresh()
@@ -46,17 +49,15 @@ public class AuctionConsole implements AuctionController.AuctionView
         System.out.println("\n-------------------------");
         System.out.println("Current Item: " + item.getName());
         System.out.println("Category: " + item.getCategory());
-        System.out.printf(
-            "Starting Price: $%.2f%n", item.getStartPrice());
-        System.out.printf(
-            "Current Bid: $%.2f%n", item.getCurrentBid());
+        System.out.printf("Starting Price: $%.2f%n", item.getStartPrice());
+        System.out.printf("Current Bid: $%.2f%n", item.getCurrentBid());
+        System.out.println("Bid Loop: " + sim.getCurrentLoop() + " / " + sim.getMaxLoops());
 
         Bidder highest = item.getHighestBidder();
 
         if (highest != null)
         {
-            System.out.println(
-                "Highest Bidder: " + highest.getName());
+            System.out.println("Highest Bidder: " + highest.getName());
         }
         else
         {
@@ -67,20 +68,17 @@ public class AuctionConsole implements AuctionController.AuctionView
 
         if (current != null)
         {
-            System.out.println(
-                "\nCurrent Turn: " + current.getName());
-            System.out.printf(
-                "Remaining Budget: $%.2f%n",
-                current.getBudget());
+            System.out.println("\nCurrent Turn: " + current.getName());
+            System.out.printf("Remaining Budget: $%.2f%n", current.getBudget());
         }
         else
         {
-            System.out.println(
-                "\nAll bidders have taken their turns.");
+            System.out.println("\nAll bidders have taken their turns for this round.");
         }
 
         System.out.println("-------------------------");
     }
+
 
     @Override
     public void promptBid()
@@ -88,19 +86,20 @@ public class AuctionConsole implements AuctionController.AuctionView
         System.out.println("Please enter a valid bid.");
     }
 
+
     @Override
     public void promptBidderDetails()
     {
-        System.out.println(
-            "Please enter the bidder details again.");
+        System.out.println("Please enter the bidder details again.");
     }
+
 
     @Override
     public void promptItemDetails()
     {
-        System.out.println(
-            "Please enter the item details again.");
+        System.out.println("Please enter the item details again.");
     }
+
 
     @Override
     public void showResultsText(String text)
@@ -110,10 +109,12 @@ public class AuctionConsole implements AuctionController.AuctionView
         System.out.println("===========================");
     }
 
+
     public String readLine()
     {
         return scanner.nextLine().trim();
     }
+
 
     private int readCount(String message)
     {
@@ -135,10 +136,10 @@ public class AuctionConsole implements AuctionController.AuctionView
                 // Ask again for valid input.
             }
 
-            System.out.println(
-                "Please enter a non-negative whole number.");
+            System.out.println("Please enter a non-negative whole number.");
         }
     }
+
 
     private double readAmount(String message)
     {
@@ -164,6 +165,7 @@ public class AuctionConsole implements AuctionController.AuctionView
         }
     }
 
+
     private void addBidders()
     {
         int count = readCount("How many bidders? ");
@@ -184,12 +186,12 @@ public class AuctionConsole implements AuctionController.AuctionView
                 System.out.print("Preferred Category: ");
                 String preference = readLine();
 
-                controller.createBidder(
-                    name, budget, preference);
+                controller.createBidder(name, budget, preference);
             }
             while (inputError);
         }
     }
+
 
     private void addItems()
     {
@@ -211,12 +213,12 @@ public class AuctionConsole implements AuctionController.AuctionView
                 System.out.print("Category: ");
                 String category = readLine();
 
-                controller.createItem(
-                    name, price, category);
+                controller.createItem(name, price, category);
             }
             while (inputError);
         }
     }
+
 
     private void runAuction()
     {
@@ -233,14 +235,13 @@ public class AuctionConsole implements AuctionController.AuctionView
             {
                 Bidder bidder = sim.getCurrentBidder();
 
-                if (bidder == null)
+                if (bidder == null || sim.isReadyToClose())
                 {
                     controller.finishRound();
                     break;
                 }
 
-                System.out.print(
-                    "\nEnter bid amount or 'pass': ");
+                System.out.print("\nEnter bid amount or 'pass': ");
 
                 String input = readLine();
 
@@ -252,24 +253,29 @@ public class AuctionConsole implements AuctionController.AuctionView
                 {
                     controller.submitBid(input);
                 }
+                
+                if (sim.isReadyToClose() && sim.getCurrentItem() != null)
+                {
+                    controller.finishRound();
+                    break;
+                }
             }
         }
 
         controller.showResults();
     }
 
+
     public void run()
     {
-        System.out.println(
-            "Welcome to the Auction Simulator!");
+        System.out.println("Welcome to the Auction Simulator!");
 
         addBidders();
         addItems();
 
         if (!sim.hasMoreItems())
         {
-            System.out.println(
-                "No items were added. Auction ended.");
+            System.out.println("No items were added. Auction ended.");
             return;
         }
 
@@ -277,9 +283,9 @@ public class AuctionConsole implements AuctionController.AuctionView
 
         runAuction();
 
-        System.out.println(
-            "\nThank you for participating!");
+        System.out.println("\nThank you for participating!");
     }
+
 
     public static void main(String[] args)
     {

@@ -6,23 +6,11 @@ public class AuctionController
     public interface AuctionView
     {
         void showError(String message);     // bad input, wrong state
-
-
         void showMessage(String message);   // neutral info
-
-
         void refresh();                     // redraw current item, bidder, bid
-
-
         void promptBid();                   // re-prompt for a bid
-
-
         void promptBidderDetails();         // re-prompt for bidder fields
-
-
         void promptItemDetails();           // re-prompt for item fields
-
-
         void showResultsText(String text);  // final results screen
     }
 
