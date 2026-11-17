@@ -1,8 +1,8 @@
 # Team 31 — Auction Simulator
 
-CS 2114 · Project 3: Designing for Change · Deliverable 3 — First Prototype
+CS 2114 · Project 3: Deliverable 4 — Second Prototype and Tests
 
-A console auction simulator. Bidders with budgets take turns bidding on items, one item at a time. The highest bid wins and the winner pays for the item. If everyone passes, the item will go unsold. One generic linked queue (`AuctionQueue<T>`) holds both the items and the bidders.
+A console auction simulator. Bidders with budgets take turns bidding on items across multi-round bid loops. The highest bid wins and the winner pays for the item. If everyone passes, the item will go unsold. One generic linked queue (AuctionQueue<T>) holds both items and bidders.
 
 - **Model:** `Node`, `AuctionQueue`, `Item`, `Bidder`, `AuctionSim`
 - **View:** `AuctionConsole`
@@ -36,73 +36,51 @@ java AuctionConsole
 
 ## Reflection
 
-### What changed from our spec?
+### How did our design absorb the change?
 
-- **Extra methods in the model.** The spec gave the controller no way to see the result of an item. We added `isRoundActive()`, `isReadyToClose()`, `getLastClosedItem()` and `getClosedItems()` to `AuctionSim`, and `addWonItem()` and `getWonItems()` to `Bidder`. The controller needs these to show winners and final results without touching the queues.
-- **Fairer turn order.** The spec said each bidder moves to the back of the queue after their turn. But then the queue ends up in the same order after every item, so the same bidder always goes first. We added one extra rotation when an item closes, so a different bidder goes first next time.
-- **Validation.** The model throws exceptions for bad data (blank names, negative money, bad bids). `placeBid` returns `false` instead of throwing, as the spec says, and the same bidder keeps their turn. Turning typed text into a number stays in the controller.
-- **Small decisions.** A bid must be strictly higher than the current bid (the start price if there are no bids yet). Names are trimmed. A blank preference is allowed, but a null one is not.
-- **Tests.** All the core unit tests we planned in Deliverable 2 for `AuctionQueue`, `Item`, `Bidder`, and `AuctionSim` using JUnit 5 (`AuctionQueueTest`, `ItemTest`, `BidderTest`, `AuctionSimTest`). They test all our valid inputs, weird edge cases, bad inputs, and state exceptions.
+In Deliverable 3, we predicted that our change feature (Bid Loop) would require edits in `AuctionSim` (to track loops and active participants) and `AuctionConsole` (to display the loop count), while `Node`, `AuctionQueue`, `Item`, and `Bidder` would remain completely untouched.
+- **What matched:** Our prediction was 100% accurate. The core linked list data structures and data objects required zero structural changes.
+- **What surprised us:** We were initially worried the controller would get messy trying to figure out when a loop ends. But by keeping all the loop counters and our isReadyToClose() check tucked away inside AuctionSim, our controller stayed unaffected.
 
-### Did the model really stand alone?
+### Did the change cross the model/view line?
 
-Yes. The model classes never print, read input, or refer to the view or controller. We ran a full auction with `ModelDriver` and no view. Nothing had to be moved across the model/view line. Small note: the model writes its exception messages, which the controller passes to `showError()`.
+No, our model/view boundary stayed completely solid. `AuctionConsole` doesn't hold onto copies of model state; it just grabs what it needs by calling getters like `sim.getCurrentLoop()` and `sim.getMaxLoops()` when `refresh()` runs. User input only flows one way: view -> controller -> model.
 
-### What happened to our unknowns?
+### What changed from our D3 plan?
 
-- **Solved:** What if everyone passes? The item goes unsold and budgets stay the same.
-- **Solved:** How to rotate fairly? Rotate after each turn, plus one extra rotation when an item closes.
-- **Solved:** How to track money and items won? The winner is charged when the item closes, and the item is added to their won list.
-- **Still open:** How a bidder decides to raise the bid or pass. In the MVP a person types it.
-- **Still open:** The Bid Loop and how many loops to allow. This is our planned change feature.
+Our core method signatures and validation rules stayed right on track with our Deliverable 3 plan. We just added private loop tracking fields (`currentLoop`, `MAX_LOOPS`) and helper methods to `AuctionSim` without breaking any existing signatures.
+
+### What design change would make the next feature cheaper?
+
+If we were adding something like automatic proxy bidding next, setting up an Observer / Event Listener pattern between `AuctionSim` and the controller/view would make things way better. Right now, the view is polling the model during a refresh; an observer system would let the model broadcast state changes automatically.
 
 ### What doesn't work yet?
 
-- No Bid Loop. Each bidder gets one turn per item, so early bidders can't respond to later bids.
-- No automatic bidding. Category and preference exist but don't affect anything yet.
-- Duplicate bidder names are allowed and not handled.
+- Automatic proxy bidding where bidder preferences dynamically adjust their max bids.
+- Saving or exporting completed auction summaries to an external file.
 
 ---
 
 ## Next Steps
 
-### Finishing the MVP (in order)
+### What is left for the final build? (in order)
 
-1. Get the controller and console running the whole MVP path: add bidders and items, auction every item, show results.
-2. Check every bad-input case at the console: non-numeric or blank bids, bids too low or over budget, blank names, no bidders or items.
-3. Look through and check every edge case coverage in the existing JUnit Tests.
-4. Decide what to do about duplicate bidder names.
+1. Implement more logic on dropping uninterested bidders and advancing preference logic.
+2. Implement constant file logging of completed auction results.
+3. Clean up terminal UI formatting, spacing, and error recovery prompts.
 
-### Our change feature: Bid Loop
 
-Bidders go around the queue repeatedly. A bidder who passes drops out of that item. The item ends when one bidder is left or a maximum number of loops is reached. We will use a fixed, adjustable maximum (default 3) instead of trying to find an "optimal" number.
+### Stretch Goals Committed vs. Dropped
 
-**What we predict will change:**
+- **Committed:** The Bid Loop feature was fully implemented and JUnit test coverage with queue operations and bad-input validation.
+- **Dropped:** Graphical UI displaying all items to bidders before each round.
 
-| Class | Change? | Why |
-|---|---|---|
-| `AuctionSim` | Yes | It must track the current loop and who is still bidding. We hope its public method signatures stay the same. |
-| `AuctionController` | Yes, small | It keeps prompting until the model says the item is finished. |
-| `AuctionConsole` | Maybe, small | Possibly show the loop number. |
-| `Node`, `AuctionQueue`, `Item`, `Bidder` | No | The queue already rotates, and `Item.recordBid` already accepts a series of higher bids. |
+### Three-Minute Demo Path
 
-### Stretch goals
-
-- **Doing:** Bid Loop (our change feature) and randomized item order.
-- **Dropping:** Preferences changing how much a bidder spends, and showing all items to bidders before each round.
-
-### New tests needed
-
-- Bid Loop: ends when one bidder is left; ends at the max loops; a bidder who passes isn't asked again; everyone passing leaves the item unsold; one bidder only; zero-budget bidder drops out.
-- Bad input: max loops of zero or negative; a too-low bid in a later loop.
-- Randomized order: every item is auctioned exactly once; empty and one-item lists work.
-- Any model tests still missing from the list above.
-
-### Who does what
-
-| Item | Owner |
-|---|---|
-| Bid Loop in `AuctionSim` and its tests | Rohan |
+1. **Setup & Initialization:** Launch `AuctionConsole`, input 3 bidders with starting budgets, and add 2 auction items.
+2. **Core MVP Bidding:** Walk through standard bidding, demonstrate out of budget rejections, invalid low bids, and passing turns.
+3. **Change Feature (Bid Loop):** Demonstrate the multi-round Bid Loop in action as competing bidders circle the queue across multiple loops.
+4. **Results & Test Execution:** Close the auction, display final winning results, and showcase passing JUnit test execution in the terminal.
 
 ---
 
@@ -110,11 +88,11 @@ Bidders go around the queue repeatedly. A bidder who passes drops out of that it
 
 | File | Who | How |
 |---|---|---|
-| `Node.java`, `AuctionQueue.java`, `Item.java`, `Bidder.java`, `AuctionSim.java` | Rohan | First draft written with GenAI (Claude) from our Deliverable 2 spec; reviewed, compiled and integrated by Rohan |
+| `Node.java`, `AuctionQueue.java`, `Item.java`, `Bidder.java`, `AuctionSim.java` | Rohan & Austin | First draft written with GenAI (Claude) from our Deliverable 2 spec; reviewed, compiled and integrated by Rohan; Revised with Bid loop added for Deliverable 4 by Austin |
 | `ModelDriver.java` | Rohan | Written with GenAI (Claude); run and checked by Rohan |
 | `AuctionController.java` | Poorna | Drafted with GenAI (Claude), verified and written by Poorna.|
-| `AuctionConsole.java` | Zara |  | 
-| `AuctionQueueTest.java`, `AuctionSimTest.java`, `BidderTest.java`, `ItemTest.java`  | Austin | Written and executed using JUnit 5 based on the Deliverable 2 test plan |
-| `README.md` | Team | Drafted with GenAI (Claude) from our Deliverable 1 and 2 documents and the model code; reviewed and revised by the team |
+| `AuctionConsole.java` | Zara & Austin | Revised with Bid loop display added for Deliverable 4 by Austin | 
+| `AuctionQueueTest.java`, `AuctionSimTest.java`, `BidderTest.java`, `ItemTest.java`  | Austin | Written and executed using JUnit 5 based on the Deliverable 2 test plan; revised for updated coverage and bad-input cases for Deliverable 4 |
+| `README.md` | Team | Drafted and revised collaboratively with GenAI (Claude) and the team from our Deliverable 1, 2, and 3 documents and model code |
 
-**GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. The team reviewed and ran the code and made the design decisions listed above.
+**GenAI note.** We did not use GenAI for Deliverables 1 or 2. For Deliverable 3 and 4 we used Claude (Anthropic) to write the first version of the five model classes from our Deliverable 2 spec, the model driver, and the first draft of this README. We also used it to help clean up some of the code and ensure that cases were covered for submission in Deliverable 4, according to the rubric. The team reviewed and ran the code and made the design decisions listed above.
